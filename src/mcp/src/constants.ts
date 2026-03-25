@@ -1,8 +1,12 @@
 // Shared constants for the Lokka MCP Server
 
+import os from "os";
+import path from "path";
+
 export const LokkaClientId = "a9bac4c3-af0d-4292-9453-9da89e390140";
 export const LokkaDefaultTenantId = "common";
 export const LokkaDefaultRedirectUri = "http://localhost:3000";
+export const LokkaTokenPath = path.join(os.homedir(), ".claude", "tokens", "lokka-token.json");
 
 // Default Graph API version based on USE_GRAPH_BETA environment variable
 export const getDefaultGraphApiVersion = (): "v1.0" | "beta" => {

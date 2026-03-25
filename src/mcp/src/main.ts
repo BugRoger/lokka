@@ -6,7 +6,8 @@ import { Client, PageIterator, PageCollection } from "@microsoft/microsoft-graph
 import fetch from 'isomorphic-fetch'; // Required polyfill for Graph client
 import { logger } from "./logger.js";
 import { AuthManager, AuthConfig, AuthMode } from "./auth.js";
-import { LokkaClientId, LokkaDefaultTenantId, LokkaDefaultRedirectUri, getDefaultGraphApiVersion } from "./constants.js";
+import { LokkaClientId, LokkaDefaultTenantId, LokkaDefaultRedirectUri, LokkaTokenPath, getDefaultGraphApiVersion } from "./constants.js";
+import fs from "fs";
 
 // Set up global fetch for the Microsoft Graph client
 (global as any).fetch = fetch;
@@ -605,13 +606,17 @@ async function main() {
   } else {
     // Check if we have client credentials environment variables
     const hasClientCredentials = process.env.TENANT_ID && process.env.CLIENT_ID && process.env.CLIENT_SECRET;
-    
+
     if (hasClientCredentials) {
       authMode = AuthMode.ClientCredentials;
     } else {
-      // Default to interactive mode for better user experience
-      authMode = AuthMode.Interactive;
-      logger.info("No authentication mode specified and no client credentials found. Defaulting to interactive mode.");
+      // Default to persistent token mode — caches tokens to disk and refreshes silently.
+      // On first run (no token file), it will open a browser for interactive auth.
+      authMode = AuthMode.PersistentToken;
+      const hasTokenFile = fs.existsSync(LokkaTokenPath);
+      logger.info(hasTokenFile
+        ? "Found cached token file, using persistent token mode (silent refresh)."
+        : "No cached token found, persistent token mode will open browser for initial auth.");
     }
   }
 
@@ -621,11 +626,11 @@ async function main() {
   let tenantId: string | undefined;
   let clientId: string | undefined;
   
-  if (authMode === AuthMode.Interactive) {
-    // Interactive mode can use defaults
+  if (authMode === AuthMode.Interactive || authMode === AuthMode.PersistentToken) {
+    // Interactive and persistent token modes can use defaults
     tenantId = process.env.TENANT_ID || LokkaDefaultTenantId;
     clientId = process.env.CLIENT_ID || LokkaClientId;
-    logger.info(`Interactive mode using tenant ID: ${tenantId}, client ID: ${clientId}`);
+    logger.info(`${authMode} mode using tenant ID: ${tenantId}, client ID: ${clientId}`);
   } else {
     // All other modes require explicit values from environment variables
     tenantId = process.env.TENANT_ID;

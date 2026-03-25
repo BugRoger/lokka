@@ -1,5 +1,8 @@
 {
-  "name": "@merill/lokka",
+  "name": "@bugroger/lokka",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "version": "0.3.0",
   "description": "Lokka is a Model Context Protocol (MCP) server for Microsoft Graph.",
   "license": "MIT",

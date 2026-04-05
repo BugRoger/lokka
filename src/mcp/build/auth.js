@@ -99,28 +99,36 @@ export var AuthMode;
 const TOKEN_ENDPOINT = "https://login.microsoftonline.com/common/oauth2/v2.0/token";
 const AUTHORIZE_ENDPOINT = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize";
 const REFRESH_BUFFER_SECONDS = 300; // refresh 5 minutes before expiry
-// Default scopes for interactive auth — offline_access is required for refresh tokens
-const DEFAULT_INTERACTIVE_SCOPES = [
+// Read-only scopes — auto-approved, used by default
+const DEFAULT_READ_SCOPES = [
     "Calendars.Read",
-    "Calendars.Read.Shared",
-    "Calendars.ReadWrite",
-    "Calendars.ReadWrite.Shared",
     "Chat.Read",
-    "Chat.ReadWrite",
     "Contacts.Read",
+    "Files.Read",
+    "Mail.Read",
+    "Tasks.Read",
+    "User.Read",
+    "Calendars.ReadWrite",
+    "Mail.ReadWrite"
+];
+// Write scopes — auto-approved but not included by default
+const DEFAULT_WRITE_SCOPES = [
+    "Calendars.ReadWrite",
+    "Mail.ReadWrite",
+    "Mail.Send",
+];
+// Scopes that require explicit user consent via interactive auth prompt
+const USER_CONSENT_SCOPES = [
+    "Calendars.Read.Shared",
+    "Calendars.ReadWrite.Shared",
+    "Chat.ReadWrite",
     "Contacts.Read.Shared",
     "Contacts.ReadWrite",
     "Contacts.ReadWrite.Shared",
-    "Files.Read",
     "Files.ReadWrite",
-    "Mail.Read",
     "Mail.Read.Shared",
-    "Mail.ReadWrite",
     "Mail.ReadWrite.Shared",
-    "Mail.Send",
     "Mail.Send.Shared",
-    "Tasks.Read",
-    "User.Read"
 ];
 /**
  * TokenCredential that persists tokens to disk and refreshes via HTTP.
@@ -201,7 +209,7 @@ export class PersistentTokenCredential {
             client_id: this.cachedToken.client_id || this.clientId,
             grant_type: "refresh_token",
             refresh_token: this.cachedToken.refresh_token,
-            scope: this.cachedToken.scope || DEFAULT_INTERACTIVE_SCOPES.join(" "),
+            scope: this.cachedToken.scope || DEFAULT_READ_SCOPES.join(" "),
         });
         try {
             const response = await fetch(TOKEN_ENDPOINT, {
@@ -240,7 +248,7 @@ export class PersistentTokenCredential {
         // Generate PKCE challenge
         const codeVerifier = randomBytes(32).toString("base64url");
         const codeChallenge = createHash("sha256").update(codeVerifier).digest("base64url");
-        const scopes = DEFAULT_INTERACTIVE_SCOPES.join(" ");
+        const scopes = DEFAULT_READ_SCOPES.join(" ");
         // Start local server to capture the redirect
         return new Promise((resolve, reject) => {
             const server = createServer(async (req, res) => {

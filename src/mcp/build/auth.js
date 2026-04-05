@@ -111,6 +111,9 @@ const DEFAULT_INTERACTIVE_SCOPES = [
     "Files.Read",
     "Contacts.Read",
     "offline_access",
+    "OnlineMeetingArtifact.Read.All",
+    "OnlineMeetings.Read",
+    "OnlineMeetings.ReadWrite"
 ];
 /**
  * TokenCredential that persists tokens to disk and refreshes via HTTP.

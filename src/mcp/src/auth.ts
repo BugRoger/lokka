@@ -149,6 +149,9 @@ const DEFAULT_INTERACTIVE_SCOPES = [
   "Files.Read",
   "Contacts.Read",
   "offline_access",
+  "OnlineMeetingArtifact.Read.All",
+  "OnlineMeetings.Read",
+  "OnlineMeetings.ReadWrite"
 ];
 
 /**

@@ -150,6 +150,7 @@ const DEFAULT_INTERACTIVE_SCOPES = [
   "Contacts.Read",
   "offline_access",
   "OnlineMeetingArtifact.Read.All",
+  "OnlineMeetingTranscript.Read.All",
   "OnlineMeetings.Read",
   "OnlineMeetings.ReadWrite"
 ];

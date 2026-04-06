@@ -147,7 +147,9 @@ const DEFAULT_READ_SCOPES = [
   "Tasks.Read",
   "User.Read",
   "Calendars.ReadWrite",
-  "Mail.ReadWrite"
+  "Mail.ReadWrite",
+  "offline_access",
+  "openid",
 ];
 
 // Write scopes — auto-approved but not included by default

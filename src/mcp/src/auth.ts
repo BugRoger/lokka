@@ -146,7 +146,6 @@ const DEFAULT_READ_SCOPES = [
   "Mail.Read",
   "Tasks.Read",
   "User.Read",
-  "Calendars.ReadWrite",
   "Mail.ReadWrite",
   "offline_access",
   "openid",
